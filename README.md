@@ -1,5 +1,13 @@
-# drone-plugin-shell
+# drone-plugin-latest delegate
 
-example drone plugin using shell scripting
+get the latest delegate image for your harness account
 
-![image](https://user-images.githubusercontent.com/7338312/210391666-6f24a71d-6d6d-4997-aa9b-0893d458e8c9.png)
+## configuration
+
+- `HARNESS_PLATFORM_API_KEY`: api key to authenticate to harness api (required)
+- `HARNESS_ENDPOINT`: harness url for your account (default: `app.harness.io`)
+
+## output
+
+- `latestSupportedVersion`
+- `latestSupportedMinimalVersion`

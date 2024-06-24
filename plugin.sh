@@ -1,6 +1,12 @@
 #!/bin/sh
 
-curl \
-  -X ${PLUGIN_METHOD} \
-  -d ${PLUGIN_BODY} \
-  ${PLUGIN_URL}
+# HARNESS_ACCOUNT_ID should be set by harness system
+
+HARNESS_ENDPOINT="${PLUGIN_HARNESS_ENDPOINT:-app.harness.io}"
+
+RESULT=$(curl "https://$HARNESS_ENDPOINT/ng/api/delegate-setup/latest-supported-version?accountIdentifier=$HARNESS_ACCOUNT_ID" -H "x-api-key: $PLUGIN_HARNESS_PLATFORM_API_KEY")
+
+echo $RESULT | jq .
+
+export latestSupportedVersion=$(echo $RESULT | jq '.resource.latestSupportedVersion')
+export latestSupportedMinimalVersion=$(echo $RESULT | jq '.resource.latestSupportedMinimalVersion')
