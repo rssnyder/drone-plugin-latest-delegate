@@ -8,5 +8,5 @@ RESULT=$(curl "https://$HARNESS_ENDPOINT/ng/api/delegate-setup/latest-supported-
 
 echo $RESULT | jq .
 
-export latestSupportedVersion=$(echo $RESULT | jq '.resource.latestSupportedVersion')
-export latestSupportedMinimalVersion=$(echo $RESULT | jq '.resource.latestSupportedMinimalVersion')
+echo "latestSupportedVersion=$(echo $RESULT | jq '.resource.latestSupportedVersion')" >> $DRONE_OUTPUT
+echo "latestSupportedMinimalVersion=$(echo $RESULT | jq '.resource.latestSupportedMinimalVersion')" >> $DRONE_OUTPUT
