@@ -1,9 +1,7 @@
-FROM alpine
+FROM python:3.12-slim
 
-ADD plugin.sh /bin/
+ADD plugin.py requirements.txt /usr/local/bin/
 
-RUN chmod +x /bin/plugin.sh
+RUN pip install -r /usr/local/bin/requirements.txt
 
-RUN apk -Uuv add curl ca-certificates jq
-
-ENTRYPOINT /bin/plugin.sh
+ENTRYPOINT python /usr/local/bin/plugin.py
