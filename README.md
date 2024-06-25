@@ -2,6 +2,8 @@
 
 get the latest delegate image for your harness account
 
+optinally, set the latest custom delegate image for your account
+
 ## configuration
 
 - `HARNESS_PLATFORM_API_KEY`: api key to authenticate to harness api (required)
