@@ -1,7 +1,7 @@
 from os import getenv
 from sys import exit
 
-from requests import get
+from requests import get, put
 
 
 def write_outputs(outputs: dict[str, str]):
@@ -35,7 +35,7 @@ def check_env(variable: str, default: str = None):
     """
 
     value = getenv(variable, default)
-    if not value:
+    if value == None:
         # if we are missing a PLUGIN_ var, ask the user for the expected setting
         stripped_variable = variable if "PLUGIN_" not in variable else variable[7:]
         print(f"{stripped_variable} required")
@@ -48,18 +48,42 @@ def main():
     account_id = check_env("HARNESS_ACCOUNT_ID")
     endpoint = check_env("PLUGIN_HARNESS_ENDPOINT", "app.harness.io")
     api_key = check_env("PLUGIN_HARNESS_PLATFORM_API_KEY")
+    delegate_tag = check_env("PLUGIN_DELEGATE_TAG", "")
+    valid_till_release = check_env("PLUGIN_VALID_TILL_NEXT_RELEASE", "false")
+    valid_for_days = check_env("PLUGIN_VALID_FOR_DAYS", "180")
 
-    resp = get(
-        f"https://{endpoint}/ng/api/delegate-setup/latest-supported-version",
-        params={"accountIdentifier": account_id},
-        headers={"x-api-key": api_key},
-    )
+    if delegate_tag:
+        # set latest custom delegate for account
+        resp = put(
+            f"https://{endpoint}/ng/api/delegate-setup/override-delegate-tag",
+            params={
+                "accountIdentifier": account_id,
+                "validTillNextRelease": valid_till_release,
+                "validForDays": int(valid_for_days),
+                "delegateTag": delegate_tag,
+            },
+            headers={"x-api-key": api_key},
+        )
 
-    resp.raise_for_status()
+        resp.raise_for_status()
 
-    data = resp.json()
+        data = resp.json()
 
-    write_outputs(data.get("resource", {}))
+        print(data.get("resource"))
+
+    else:
+        # return latest delegate tag supported for account
+        resp = get(
+            f"https://{endpoint}/ng/api/delegate-setup/latest-supported-version",
+            params={"accountIdentifier": account_id},
+            headers={"x-api-key": api_key},
+        )
+
+        resp.raise_for_status()
+
+        data = resp.json()
+
+        write_outputs(data.get("resource", {}))
 
 
 if __name__ == "__main__":
